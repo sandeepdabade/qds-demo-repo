@@ -1,0 +1,487 @@
+{
+  "paragraphs": [
+    {
+      "text": "",
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "version": "v0",
+      "jobName": "paragraph_1525373306780_12528153",
+      "id": "20180503-184826_1069768164_q_DR7VJZ3T561525370528",
+      "dateCreated": "May 3, 2018 6:48:26 PM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%sql\nuse sdb_metastore2\n",
+      "user": "sdabade@qubole.com",
+      "dateUpdated": "May 3, 2018 6:24:04 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/sql"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "JOB UI",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            "https://api.qubole.com/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.152.33.43%3A8088%2Fproxy%2Fapplication_1525370976563_0001/jobs/job?spark\u003dtrue\u0026id\u003d6"
+          ],
+          "interpreterSettingId": "2DEB2BRNC550771524865305984"
+        }
+      },
+      "version": "v0",
+      "jobName": "paragraph_1525370983627_-1970776330",
+      "id": "20180503-180943_1230334015_q_DR7VJZ3T561525370528",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": ""
+      },
+      "dateCreated": "May 3, 2018 6:09:43 PM",
+      "dateStarted": "May 3, 2018 6:24:04 PM",
+      "dateFinished": "May 3, 2018 6:24:04 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "val orderItemsByPName \u003d sqlContext.sql(\"SELECT oi.order_item_order_id, collect_set(p.product_name) products FROM order_items oi join products p ON (oi.order_item_product_id \u003d p.product_id ) group by oi.order_item_order_id order by oi.order_item_order_id\")\n\nimport org.apache.spark.mllib.fpm.FPGrowth\nimport scala.collection.mutable._\n\n// ProductCombinations class that holds (string of) products and the associated frequency\nclass ProductCombinations (var products: String, var freq: Long) extends Ordered [ProductCombinations] {\n    override def toString \u003d {\n        (products + \" bought ***\" + freq + \"*** time(s)\")\n    }\n    \n    // return 0 if the same; negative if this \u003c that; positive if this \u003e that\n    // used for sorting\n    def compare (that: ProductCombinations) \u003d {\n        if (this.freq \u003d\u003d that.freq) {\n            0\n        }\n        else if (this.freq \u003e that.freq) {\n            1\n        }\n        else {\n            -1\n        }\n    }\n}\n\nval orders \u003d orderItemsByPName.rdd.map(r \u003d\u003e {\n    r.getAs[WrappedArray[Int]](1).mkString(\",\").split(\",\")\n})\n\nval model \u003d new FPGrowth()\n  .setMinSupport(0)\n  .run(orders)\n  \nvar PCList \u003d List[ProductCombinations]()\n\nmodel.freqItemsets.collect().foreach {\n    itemset \u003d\u003e {\n      var pc \u003d new ProductCombinations(itemset.items.mkString(\",\"), itemset.freq)\n      PCList \u003d pc :: PCList\n    }\n}\n",
+      "user": "sdabade@qubole.com",
+      "dateUpdated": "May 3, 2018 6:24:04 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "JOB UI",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            "https://api.qubole.com/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.152.33.43%3A8088%2Fproxy%2Fapplication_1525370976563_0001/jobs/job?spark\u003dtrue\u0026id\u003d7",
+            "https://api.qubole.com/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.152.33.43%3A8088%2Fproxy%2Fapplication_1525370976563_0001/jobs/job?spark\u003dtrue\u0026id\u003d8",
+            "https://api.qubole.com/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.152.33.43%3A8088%2Fproxy%2Fapplication_1525370976563_0001/jobs/job?spark\u003dtrue\u0026id\u003d9",
+            "https://api.qubole.com/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.152.33.43%3A8088%2Fproxy%2Fapplication_1525370976563_0001/jobs/job?spark\u003dtrue\u0026id\u003d10",
+            "https://api.qubole.com/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.152.33.43%3A8088%2Fproxy%2Fapplication_1525370976563_0001/jobs/job?spark\u003dtrue\u0026id\u003d11"
+          ],
+          "interpreterSettingId": "2DEB2BRNC550771524865305984"
+        }
+      },
+      "version": "v0",
+      "jobName": "paragraph_1525371203683_273569629",
+      "id": "20180503-181323_907938851_q_DR7VJZ3T561525370528",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "\norderItemsByPName: org.apache.spark.sql.DataFrame \u003d [order_item_order_id: int, products: array\u003cstring\u003e]\n\nimport org.apache.spark.mllib.fpm.FPGrowth\n\nimport scala.collection.mutable._\n\ndefined class ProductCombinations\n\norders: org.apache.spark.rdd.RDD[Array[String]] \u003d MapPartitionsRDD[61] at map at \u003cconsole\u003e:37\n\nmodel: org.apache.spark.mllib.fpm.FPGrowthModel[String] \u003d org.apache.spark.mllib.fpm.FPGrowthModel@54e3bc75\n\nPCList: List[ProductCombinations] \u003d List()\n"
+      },
+      "dateCreated": "May 3, 2018 6:13:23 PM",
+      "dateStarted": "May 3, 2018 6:24:04 PM",
+      "dateFinished": "May 3, 2018 6:24:31 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "// Exclude entries with single products and display top 10 combinations of products bought together\nvar multipleProductCombos \u003d PCList.filter(p \u003d\u003e p.products.split(\",\").size \u003d\u003d 2).sortWith(_.freq \u003e _.freq)\nmultipleProductCombos.take(10).foreach(pc \u003d\u003e {\n    println(pc.toString() + \"\\n\")\n})\n",
+      "user": "sdabade@qubole.com",
+      "dateUpdated": "May 3, 2018 6:25:43 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "version": "v0",
+      "jobName": "paragraph_1525371229217_-962213190",
+      "id": "20180503-181349_563154601_q_DR7VJZ3T561525370528",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "multipleProductCombos: List[ProductCombinations] \u003d List(Nike Men\u0027s CJ Elite 2 TD Football Cleat,Perfect Fitness Perfect Rip Deck bought ***6169*** time(s), Nike Men\u0027s Dri-FIT Victory Golf Polo,Perfect Fitness Perfect Rip Deck bought ***5890*** time(s), O\u0027Brien Men\u0027s Neoprene Life Vest,Perfect Fitness Perfect Rip Deck bought ***5556*** time(s), Nike Men\u0027s Dri-FIT Victory Golf Polo,Nike Men\u0027s CJ Elite 2 TD Football Cleat bought ***5442*** time(s), O\u0027Brien Men\u0027s Neoprene Life Vest,Nike Men\u0027s CJ Elite 2 TD Football Cleat bought ***4991*** time(s), Field \u0026 Stream Sportsman 16 Gun Fire Safe,Perfect Fitness Perfect Rip Deck bought ***4984*** time(s), O\u0027Brien Men\u0027s Neoprene Life Vest,Nike Men\u0027s Dri-FIT Victory Golf Polo bought ***4795*** time(s), Field \u0026 Stream Sportsman 16 Gun Fire Safe,Nike M...Nike Men\u0027s CJ Elite 2 TD Football Cleat,Perfect Fitness Perfect Rip Deck bought ***6169*** time(s)\n\nNike Men\u0027s Dri-FIT Victory Golf Polo,Perfect Fitness Perfect Rip Deck bought ***5890*** time(s)\n\nO\u0027Brien Men\u0027s Neoprene Life Vest,Perfect Fitness Perfect Rip Deck bought ***5556*** time(s)\n\nNike Men\u0027s Dri-FIT Victory Golf Polo,Nike Men\u0027s CJ Elite 2 TD Football Cleat bought ***5442*** time(s)\n\nO\u0027Brien Men\u0027s Neoprene Life Vest,Nike Men\u0027s CJ Elite 2 TD Football Cleat bought ***4991*** time(s)\n\nField \u0026 Stream Sportsman 16 Gun Fire Safe,Perfect Fitness Perfect Rip Deck bought ***4984*** time(s)\n\nO\u0027Brien Men\u0027s Neoprene Life Vest,Nike Men\u0027s Dri-FIT Victory Golf Polo bought ***4795*** time(s)\n\nField \u0026 Stream Sportsman 16 Gun Fire Safe,Nike Men\u0027s CJ Elite 2 TD Football Cleat bought ***4651*** time(s)\n\nPelican Sunstream 100 Kayak,Perfect Fitness Perfect Rip Deck bought ***4400*** time(s)\n\nField \u0026 Stream Sportsman 16 Gun Fire Safe,Nike Men\u0027s Dri-FIT Victory Golf Polo bought ***4371*** time(s)\n\n"
+      },
+      "dateCreated": "May 3, 2018 6:13:49 PM",
+      "dateStarted": "May 3, 2018 6:25:44 PM",
+      "dateFinished": "May 3, 2018 6:25:45 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "// Exclude entries with single products and display least 10 combinations of products bought together\nvar multipleProductCombos \u003d PCList.filter(p \u003d\u003e p.products.split(\",\").size \u003d\u003d 3).sortWith(_.freq \u003e _.freq)\nmultipleProductCombos.take(10).foreach(pc \u003d\u003e {\n    println(pc.toString() + \"\\n\")\n})\n",
+      "user": "sdabade@qubole.com",
+      "dateUpdated": "May 3, 2018 6:26:08 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [],
+          "values": [],
+          "groups": [],
+          "scatter": {}
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "version": "v0",
+      "jobName": "paragraph_1525371943979_-2118970363",
+      "id": "20180503-182543_1515704527_q_DR7VJZ3T561525370528",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TEXT",
+        "msg": "multipleProductCombos: List[ProductCombinations] \u003d List(Nike Men\u0027s Dri-FIT Victory Golf Polo,Nike Men\u0027s CJ Elite 2 TD Football Cleat,Perfect Fitness Perfect Rip Deck bought ***1678*** time(s), O\u0027Brien Men\u0027s Neoprene Life Vest,Nike Men\u0027s CJ Elite 2 TD Football Cleat,Perfect Fitness Perfect Rip Deck bought ***1531*** time(s), O\u0027Brien Men\u0027s Neoprene Life Vest,Nike Men\u0027s Dri-FIT Victory Golf Polo,Perfect Fitness Perfect Rip Deck bought ***1520*** time(s), Field \u0026 Stream Sportsman 16 Gun Fire Safe,Nike Men\u0027s CJ Elite 2 TD Football Cleat,Perfect Fitness Perfect Rip Deck bought ***1443*** time(s), O\u0027Brien Men\u0027s Neoprene Life Vest,Nike Men\u0027s Dri-FIT Victory Golf Polo,Nike Men\u0027s CJ Elite 2 TD Football Cleat bought ***1332*** time(s), Field \u0026 Stream Sportsman 16 Gun Fire Safe,Nike Men\u0027s Dri-FIT V...Nike Men\u0027s Dri-FIT Victory Golf Polo,Nike Men\u0027s CJ Elite 2 TD Football Cleat,Perfect Fitness Perfect Rip Deck bought ***1678*** time(s)\n\nO\u0027Brien Men\u0027s Neoprene Life Vest,Nike Men\u0027s CJ Elite 2 TD Football Cleat,Perfect Fitness Perfect Rip Deck bought ***1531*** time(s)\n\nO\u0027Brien Men\u0027s Neoprene Life Vest,Nike Men\u0027s Dri-FIT Victory Golf Polo,Perfect Fitness Perfect Rip Deck bought ***1520*** time(s)\n\nField \u0026 Stream Sportsman 16 Gun Fire Safe,Nike Men\u0027s CJ Elite 2 TD Football Cleat,Perfect Fitness Perfect Rip Deck bought ***1443*** time(s)\n\nO\u0027Brien Men\u0027s Neoprene Life Vest,Nike Men\u0027s Dri-FIT Victory Golf Polo,Nike Men\u0027s CJ Elite 2 TD Football Cleat bought ***1332*** time(s)\n\nField \u0026 Stream Sportsman 16 Gun Fire Safe,Nike Men\u0027s Dri-FIT Victory Golf Polo,Perfect Fitness Perfect Rip Deck bought ***1319*** time(s)\n\nField \u0026 Stream Sportsman 16 Gun Fire Safe,Nike Men\u0027s Dri-FIT Victory Golf Polo,Nike Men\u0027s CJ Elite 2 TD Football Cleat bought ***1247*** time(s)\n\nPelican Sunstream 100 Kayak,Nike Men\u0027s CJ Elite 2 TD Football Cleat,Perfect Fitness Perfect Rip Deck bought ***1215*** time(s)\n\nField \u0026 Stream Sportsman 16 Gun Fire Safe,O\u0027Brien Men\u0027s Neoprene Life Vest,Perfect Fitness Perfect Rip Deck bought ***1186*** time(s)\n\nPelican Sunstream 100 Kayak,Nike Men\u0027s Dri-FIT Victory Golf Polo,Perfect Fitness Perfect Rip Deck bought ***1160*** time(s)\n\n"
+      },
+      "dateCreated": "May 3, 2018 6:25:43 PM",
+      "dateStarted": "May 3, 2018 6:26:09 PM",
+      "dateFinished": "May 3, 2018 6:26:11 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%sql\nselect date_format(o.order_date,\u0027YYYY/MM/dd\u0027) as order_date, count(o.*) as Total_Orders from orders o \ngroup by o.order_date \norder by o.order_date \n",
+      "user": "sdabade@qubole.com",
+      "dateUpdated": "May 3, 2018 6:27:23 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "multiBarChart",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "order_date",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "Total_Orders",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "groups": [],
+          "scatter": {
+            "xAxis": {
+              "name": "order_date",
+              "index": 0.0,
+              "aggr": "sum"
+            },
+            "yAxis": {
+              "name": "Total_Orders",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          }
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "JOB UI",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            "https://api.qubole.com/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.152.33.43%3A8088%2Fproxy%2Fapplication_1525370976563_0001/jobs/job?spark\u003dtrue\u0026id\u003d12"
+          ],
+          "interpreterSettingId": "2DEB2BRNC550771524865305984"
+        }
+      },
+      "version": "v0",
+      "jobName": "paragraph_1525371968976_344823675",
+      "id": "20180503-182608_470032333_q_DR7VJZ3T561525370528",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TABLE",
+        "msg": "order_date\tTotal_Orders\n2013/01/01\t1\n2013/07/25\t142\n2013/07/26\t269\n2013/07/27\t202\n2013/07/28\t187\n2013/07/29\t253\n2013/07/30\t227\n2013/07/31\t252\n2013/08/01\t246\n2013/08/02\t224\n2013/08/03\t183\n2013/08/04\t187\n2013/08/05\t153\n2013/08/06\t258\n2013/08/07\t203\n2013/08/08\t154\n2013/08/09\t125\n2013/08/10\t270\n2013/08/11\t154\n2013/08/12\t255\n2013/08/13\t73\n2013/08/14\t193\n2013/08/15\t200\n2013/08/16\t131\n2013/08/17\t253\n2013/08/18\t199\n2013/08/19\t93\n2013/08/20\t180\n2013/08/21\t122\n2013/08/22\t186\n2013/08/23\t207\n2013/08/24\t265\n2013/08/25\t200\n2013/08/26\t184\n2013/08/27\t188\n2013/08/28\t116\n2013/08/29\t218\n2013/08/30\t114\n2013/08/31\t146\n2013/09/01\t119\n2013/09/02\t202\n2013/09/03\t218\n2013/09/04\t96\n2013/09/05\t261\n2013/09/06\t276\n2013/09/07\t215\n2013/09/08\t173\n2013/09/09\t245\n2013/09/10\t232\n2013/09/11\t109\n2013/09/12\t180\n2013/09/13\t103\n2013/09/14\t276\n2013/09/15\t140\n2013/09/16\t121\n2013/09/17\t134\n2013/09/18\t249\n2013/09/19\t206\n2013/09/20\t139\n2013/09/21\t158\n2013/09/22\t192\n2013/09/23\t177\n2013/09/24\t254\n2013/09/25\t277\n2013/09/26\t252\n2013/09/27\t264\n2013/09/28\t202\n2013/09/29\t136\n2013/09/30\t235\n2013/10/01\t111\n2013/10/02\t239\n2013/10/03\t154\n2013/10/04\t287\n2013/10/05\t215\n2013/10/06\t249\n2013/10/07\t101\n2013/10/08\t252\n2013/10/09\t124\n2013/10/10\t155\n2013/10/11\t221\n2013/10/12\t162\n2013/10/13\t277\n2013/10/14\t139\n2013/10/15\t174\n2013/10/16\t127\n2013/10/17\t163\n2013/10/18\t129\n2013/10/19\t188\n2013/10/20\t154\n2013/10/21\t116\n2013/10/22\t125\n2013/10/23\t236\n2013/10/24\t131\n2013/10/25\t158\n2013/10/26\t118\n2013/10/27\t215\n2013/10/28\t153\n2013/10/29\t128\n2013/10/30\t126\n2013/10/31\t208\n2013/11/01\t229\n2013/11/02\t151\n2013/11/03\t347\n2013/11/04\t254\n2013/11/05\t278\n2013/11/06\t234\n2013/11/07\t232\n2013/11/08\t170\n2013/11/09\t253\n2013/11/10\t170\n2013/11/11\t246\n2013/11/12\t182\n2013/11/13\t236\n2013/11/14\t287\n2013/11/15\t135\n2013/11/16\t120\n2013/11/17\t155\n2013/11/18\t179\n2013/11/19\t188\n2013/11/20\t223\n2013/11/21\t143\n2013/11/22\t249\n2013/11/23\t251\n2013/11/24\t292\n2013/11/25\t133\n2013/11/26\t124\n2013/11/27\t164\n2013/11/28\t245\n2013/11/29\t256\n2013/11/30\t255\n2013/12/01\t239\n2013/12/02\t99\n2013/12/03\t237\n2013/12/04\t182\n2013/12/05\t241\n2013/12/06\t256\n2013/12/07\t234\n2013/12/08\t141\n2013/12/09\t145\n2013/12/10\t160\n2013/12/11\t255\n2013/12/12\t157\n2013/12/13\t135\n2013/12/14\t100\n2013/12/15\t220\n2013/12/16\t114\n2013/12/17\t132\n2013/12/18\t230\n2013/12/19\t124\n2013/12/20\t259\n2013/12/21\t215\n2013/12/22\t249\n2013/12/23\t154\n2013/12/24\t170\n2013/12/25\t217\n2013/12/26\t286\n2013/12/27\t162\n2013/12/28\t222\n2014/12/29\t104\n2014/12/30\t187\n2014/12/31\t266\n2014/01/01\t135\n2014/01/02\t111\n2014/01/03\t250\n2014/01/04\t129\n2014/01/05\t266\n2014/01/06\t155\n2014/01/07\t163\n2014/01/08\t122\n2014/01/09\t207\n2014/01/10\t241\n2014/01/11\t281\n2014/01/12\t215\n2014/01/13\t179\n2014/01/14\t209\n2014/01/15\t243\n2014/01/16\t194\n2014/01/17\t149\n2014/01/18\t139\n2014/01/19\t217\n2014/01/20\t203\n2014/01/21\t259\n2014/01/22\t209\n2014/01/23\t220\n2014/01/24\t159\n2014/01/25\t104\n2014/01/26\t154\n2014/01/27\t163\n2014/01/28\t197\n2014/01/29\t158\n2014/01/30\t254\n2014/01/31\t223\n2014/02/01\t278\n2014/02/02\t192\n2014/02/03\t197\n2014/02/04\t151\n2014/02/05\t137\n2014/02/06\t224\n2014/02/07\t228\n2014/02/08\t163\n2014/02/09\t240\n2014/02/10\t232\n2014/02/11\t205\n2014/02/12\t207\n2014/02/13\t203\n2014/02/14\t174\n2014/02/15\t221\n2014/02/16\t253\n2014/02/17\t184\n2014/02/18\t219\n2014/02/19\t268\n2014/02/20\t145\n2014/02/21\t200\n2014/02/22\t128\n2014/02/23\t175\n2014/02/24\t180\n2014/02/25\t259\n2014/02/26\t141\n2014/02/27\t193\n2014/02/28\t238\n2014/03/01\t258\n2014/03/02\t117\n2014/03/03\t266\n2014/03/04\t257\n2014/03/05\t194\n2014/03/06\t216\n2014/03/07\t188\n2014/03/08\t100\n2014/03/10\t235\n2014/03/11\t204\n2014/03/12\t238\n2014/03/13\t165\n2014/03/14\t201\n2014/03/15\t247\n2014/03/16\t187\n2014/03/17\t91\n2014/03/18\t252\n2014/03/19\t130\n2014/03/20\t177\n2014/03/21\t187\n2014/03/22\t223\n2014/03/23\t211\n2014/03/24\t134\n2014/03/25\t113\n2014/03/26\t246\n2014/03/27\t152\n2014/03/28\t180\n2014/03/29\t96\n2014/03/30\t250\n2014/03/31\t263\n2014/04/01\t223\n2014/04/02\t266\n2014/04/03\t241\n2014/04/04\t221\n2014/04/05\t164\n2014/04/06\t108\n2014/04/07\t115\n2014/04/08\t233\n2014/04/09\t261\n2014/04/10\t252\n2014/04/11\t147\n2014/04/12\t232\n2014/04/13\t117\n2014/04/14\t105\n2014/04/15\t180\n2014/04/16\t140\n2014/04/17\t113\n2014/04/18\t232\n2014/04/19\t116\n2014/04/20\t195\n2014/04/21\t266\n2014/04/22\t144\n2014/04/23\t220\n2014/04/24\t124\n2014/04/25\t249\n2014/04/26\t251\n2014/04/27\t258\n2014/04/28\t125\n2014/04/29\t238\n2014/04/30\t121\n2014/05/01\t146\n2014/05/02\t198\n2014/05/03\t192\n2014/05/04\t164\n2014/05/05\t171\n2014/05/06\t265\n2014/05/07\t217\n2014/05/08\t99\n2014/05/09\t263\n2014/05/10\t196\n2014/05/11\t227\n2014/05/12\t246\n2014/05/13\t201\n2014/05/14\t167\n2014/05/15\t149\n2014/05/16\t263\n2014/05/17\t158\n2014/05/18\t185\n2014/05/19\t97\n2014/05/20\t216\n2014/05/21\t212\n2014/05/22\t104\n2014/05/23\t139\n2014/05/24\t213\n2014/05/25\t125\n2014/05/26\t144\n2014/05/27\t85\n2014/05/28\t236\n2014/05/29\t141\n2014/05/30\t102\n2014/05/31\t146\n2014/06/01\t176\n2014/06/02\t228\n2014/06/03\t130\n2014/06/04\t117\n2014/06/05\t155\n2014/06/06\t198\n2014/06/07\t191\n2014/06/08\t225\n2014/06/09\t269\n2014/06/10\t137\n2014/06/11\t132\n2014/06/12\t157\n2014/06/13\t260\n2014/06/14\t255\n2014/06/15\t128\n2014/06/16\t221\n2014/06/17\t142\n2014/06/18\t179\n2014/06/19\t276\n2014/06/20\t140\n2014/06/21\t92\n2014/06/22\t118\n2014/06/23\t149\n2014/06/24\t130\n2014/06/25\t258\n2014/06/26\t168\n2014/06/27\t253\n2014/06/28\t134\n2014/06/29\t121\n2014/06/30\t169\n2014/07/01\t189\n2014/07/02\t131\n2014/07/03\t174\n2014/07/04\t153\n2014/07/05\t233\n2014/07/06\t106\n2014/07/07\t171\n2014/07/08\t260\n2014/07/09\t150\n2014/07/10\t183\n2014/07/11\t138\n2014/07/12\t166\n2014/07/13\t221\n2014/07/14\t161\n2014/07/15\t274\n2014/07/16\t147\n2014/07/17\t162\n2014/07/18\t216\n2014/07/19\t223\n2014/07/20\t285\n2014/07/21\t235\n2014/07/22\t137\n2014/07/23\t165\n2014/07/24\t185\n2017/05/01\t1\n2017/05/01\t1\n2017/05/01\t1\n2017/05/01\t1\n2017/05/01\t1\n2017/05/01\t1\n"
+      },
+      "dateCreated": "May 3, 2018 6:26:08 PM",
+      "dateStarted": "May 3, 2018 6:27:00 PM",
+      "dateFinished": "May 3, 2018 6:27:04 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%sql\nselect to_date(o.order_date) as Order_Date, count(o.*) as Total_Orders \nfrom orders o \nwhere month(o.order_date) between ${Month1\u003d1,1(Jan)|2(Feb)|3(Mar)|4(Apr)|5(May)|6(Jun)|7(Jul)|8(Aug)|9(Sep)|10(Oct)|11(Nov)|12(Dec)} and ${Month2\u003d2,1(Jan)|2(Feb)|3(Mar)|4(Apr)|5(May)|6(Jun)|7(Jul)|8(Aug)|9(Sep)|10(Oct)|11(Nov)|12(Dec)} \nand year(o.order_date) \u003d ${Year\u003d2014,2013|2014} \ngroup by to_date(o.order_date) \norder by to_date(o.order_date)\n",
+      "user": "sdabade@qubole.com",
+      "dateUpdated": "May 3, 2018 6:28:52 PM",
+      "config": {
+        "colWidth": 12.0,
+        "graph": {
+          "mode": "table",
+          "height": 300.0,
+          "optionOpen": false,
+          "keys": [
+            {
+              "name": "Order_Date",
+              "index": 0.0,
+              "aggr": "sum"
+            }
+          ],
+          "values": [
+            {
+              "name": "Total_Orders",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          ],
+          "groups": [],
+          "scatter": {
+            "xAxis": {
+              "name": "Order_Date",
+              "index": 0.0,
+              "aggr": "sum"
+            },
+            "yAxis": {
+              "name": "Total_Orders",
+              "index": 1.0,
+              "aggr": "sum"
+            }
+          }
+        },
+        "enabled": true,
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {
+          "Year": "2014",
+          "Month2": "3",
+          "Month1": "1"
+        },
+        "forms": {
+          "Year": {
+            "name": "Year",
+            "defaultValue": "2014",
+            "options": [
+              {
+                "value": "2013"
+              },
+              {
+                "value": "2014"
+              }
+            ],
+            "hidden": false
+          },
+          "Month2": {
+            "name": "Month2",
+            "defaultValue": "2",
+            "options": [
+              {
+                "value": "1",
+                "displayName": "Jan"
+              },
+              {
+                "value": "2",
+                "displayName": "Feb"
+              },
+              {
+                "value": "3",
+                "displayName": "Mar"
+              },
+              {
+                "value": "4",
+                "displayName": "Apr"
+              },
+              {
+                "value": "5",
+                "displayName": "May"
+              },
+              {
+                "value": "6",
+                "displayName": "Jun"
+              },
+              {
+                "value": "7",
+                "displayName": "Jul"
+              },
+              {
+                "value": "8",
+                "displayName": "Aug"
+              },
+              {
+                "value": "9",
+                "displayName": "Sep"
+              },
+              {
+                "value": "10",
+                "displayName": "Oct"
+              },
+              {
+                "value": "11",
+                "displayName": "Nov"
+              },
+              {
+                "value": "12",
+                "displayName": "Dec"
+              }
+            ],
+            "hidden": false
+          },
+          "Month1": {
+            "name": "Month1",
+            "defaultValue": "1",
+            "options": [
+              {
+                "value": "1",
+                "displayName": "Jan"
+              },
+              {
+                "value": "2",
+                "displayName": "Feb"
+              },
+              {
+                "value": "3",
+                "displayName": "Mar"
+              },
+              {
+                "value": "4",
+                "displayName": "Apr"
+              },
+              {
+                "value": "5",
+                "displayName": "May"
+              },
+              {
+                "value": "6",
+                "displayName": "Jun"
+              },
+              {
+                "value": "7",
+                "displayName": "Jul"
+              },
+              {
+                "value": "8",
+                "displayName": "Aug"
+              },
+              {
+                "value": "9",
+                "displayName": "Sep"
+              },
+              {
+                "value": "10",
+                "displayName": "Oct"
+              },
+              {
+                "value": "11",
+                "displayName": "Nov"
+              },
+              {
+                "value": "12",
+                "displayName": "Dec"
+              }
+            ],
+            "hidden": false
+          }
+        }
+      },
+      "runtimeInfos": {
+        "jobUrl": {
+          "propertyName": "jobUrl",
+          "label": "JOB UI",
+          "tooltip": "View in Spark web UI",
+          "group": "spark",
+          "values": [
+            "https://api.qubole.com/cluster-proxy?encodedUrl\u003dhttp%3A%2F%2F10.152.33.43%3A8088%2Fproxy%2Fapplication_1525370976563_0001/jobs/job?spark\u003dtrue\u0026id\u003d19"
+          ],
+          "interpreterSettingId": "2DEB2BRNC550771524865305984"
+        }
+      },
+      "version": "v0",
+      "jobName": "paragraph_1525372020453_1371810435",
+      "id": "20180503-182700_1481995638_q_DR7VJZ3T561525370528",
+      "result": {
+        "code": "SUCCESS",
+        "type": "TABLE",
+        "msg": "Order_Date\tTotal_Orders\n2014-01-01\t135\n2014-01-02\t111\n2014-01-03\t250\n2014-01-04\t129\n2014-01-05\t266\n2014-01-06\t155\n2014-01-07\t163\n2014-01-08\t122\n2014-01-09\t207\n2014-01-10\t241\n2014-01-11\t281\n2014-01-12\t215\n2014-01-13\t179\n2014-01-14\t209\n2014-01-15\t243\n2014-01-16\t194\n2014-01-17\t149\n2014-01-18\t139\n2014-01-19\t217\n2014-01-20\t203\n2014-01-21\t259\n2014-01-22\t209\n2014-01-23\t220\n2014-01-24\t159\n2014-01-25\t104\n2014-01-26\t154\n2014-01-27\t163\n2014-01-28\t197\n2014-01-29\t158\n2014-01-30\t254\n2014-01-31\t223\n2014-02-01\t278\n2014-02-02\t192\n2014-02-03\t197\n2014-02-04\t151\n2014-02-05\t137\n2014-02-06\t224\n2014-02-07\t228\n2014-02-08\t163\n2014-02-09\t240\n2014-02-10\t232\n2014-02-11\t205\n2014-02-12\t207\n2014-02-13\t203\n2014-02-14\t174\n2014-02-15\t221\n2014-02-16\t253\n2014-02-17\t184\n2014-02-18\t219\n2014-02-19\t268\n2014-02-20\t145\n2014-02-21\t200\n2014-02-22\t128\n2014-02-23\t175\n2014-02-24\t180\n2014-02-25\t259\n2014-02-26\t141\n2014-02-27\t193\n2014-02-28\t238\n2014-03-01\t258\n2014-03-02\t117\n2014-03-03\t266\n2014-03-04\t257\n2014-03-05\t194\n2014-03-06\t216\n2014-03-07\t188\n2014-03-08\t100\n2014-03-10\t235\n2014-03-11\t204\n2014-03-12\t238\n2014-03-13\t165\n2014-03-14\t201\n2014-03-15\t247\n2014-03-16\t187\n2014-03-17\t91\n2014-03-18\t252\n2014-03-19\t130\n2014-03-20\t177\n2014-03-21\t187\n2014-03-22\t223\n2014-03-23\t211\n2014-03-24\t134\n2014-03-25\t113\n2014-03-26\t246\n2014-03-27\t152\n2014-03-28\t180\n2014-03-29\t96\n2014-03-30\t250\n2014-03-31\t263\n"
+      },
+      "dateCreated": "May 3, 2018 6:27:00 PM",
+      "dateStarted": "May 3, 2018 6:28:52 PM",
+      "dateFinished": "May 3, 2018 6:28:54 PM",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "",
+      "config": {},
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "version": "v0",
+      "jobName": "paragraph_1525372087996_1632962993",
+      "id": "20180503-182807_2078645579_q_DR7VJZ3T561525370528",
+      "dateCreated": "May 3, 2018 6:28:07 PM",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "SDNInsights",
+  "id": "DR7VJZ3T561525370528",
+  "angularObjects": {
+    "2DBXN1DY1550771524865306194:shared_process": [],
+    "2DBEJGY62550771524865306200:shared_process": [],
+    "2DEB2BRNC550771524865305984:shared_process": [],
+    "2DD17AA3G550771524865306188:shared_process": []
+  },
+  "config": {
+    "isDashboard": false
+  },
+  "info": {},
+  "source": "FCN"
+}

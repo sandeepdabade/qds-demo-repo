@@ -2,9 +2,9 @@
   "paragraphs": [
     {
       "title": "1. Select Hive database to be used in this notebook",
-      "text": "%sql\nuse ecommerce_db",
+      "text": "%sql\nuse ecommerce_db\n\n",
       "user": "sdabade@qubole.com",
-      "dateUpdated": "Mar 4, 2020 7:04:00 PM",
+      "dateUpdated": "Mar 4, 2020 7:46:16 PM",
       "config": {
         "colWidth": 12.0,
         "graph": {

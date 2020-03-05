@@ -46,9 +46,9 @@
     },
     {
       "title": "2. Top 10 Products by Quantity",
-      "text": "%pyspark\nimport pandas as pd\nspark \u003d SparkSession.builder\\\n        .master(\"local\") \\\n        .appName(\"E-Commerce Analytics\") \\\n        .config(\"spark.some.config.option\", \"some-value\") \\\n        .getOrCreate()\n        \ntop10ProductsByQuantity \u003d spark.sql(\"SELECT p.product_name as Product, count(oi.order_item_quantity) as QuantityOrdered from ecommerce_hive_db.order_items oi inner join ecommerce_hive_db.products p on oi.order_item_product_id \u003d p.product_id group by p.product_name order by QuantityOrdered desc limit 10\")\n\ntop10ProductsByQuantityDF \u003d top10ProductsByQuantity.toPandas()\n\nz.show(top10ProductsByQuantityDF)",
+      "text": "%pyspark\n\n# test code\nimport pandas as pd\nspark \u003d SparkSession.builder\\\n        .master(\"local\") \\\n        .appName(\"E-Commerce Analytics\") \\\n        .config(\"spark.some.config.option\", \"some-value\") \\\n        .getOrCreate()\n        \ntop10ProductsByQuantity \u003d spark.sql(\"SELECT p.product_name as Product, count(oi.order_item_quantity) as QuantityOrdered from ecommerce_hive_db.order_items oi inner join ecommerce_hive_db.products p on oi.order_item_product_id \u003d p.product_id group by p.product_name order by QuantityOrdered desc limit 10\")\n\ntop10ProductsByQuantityDF \u003d top10ProductsByQuantity.toPandas()\n\nz.show(top10ProductsByQuantityDF)",
       "user": "sdabade@qubole.com",
-      "dateUpdated": "Mar 5, 2020 8:13:54 PM",
+      "dateUpdated": "Mar 5, 2020 8:30:27 PM",
       "config": {
         "colWidth": 12.0,
         "graph": {
